@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Web.Http;
+using Microsoft.AspNetCore.Mvc;
 using WebApiExample.DataStore.Models;
 using WebApiExample.WebApp.Models;
 using WebApiExample.WebApp.Services;
 
 namespace WebApiExample.WebApp.Controllers
 {
-    public class UsersController : ApiController
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
 
@@ -16,75 +18,70 @@ namespace WebApiExample.WebApp.Controllers
             _userService = userService;
         }
 
-        public async Task<IHttpActionResult> Get()
+        [HttpGet]
+        public async Task<IActionResult> Get()
         {
             try
             {
                 var users = await _userService.GetAllUsersAsync();
-                return base.Ok(users);
+                return Ok(users);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // Should handle in ExceptionFilter
-                return base.InternalServerError();
+                return StatusCode(500);
             }
         }
 
-        public async Task<IHttpActionResult> Get(Guid id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
         {
             try
             {
                 var user = await _userService.GetUserAsync(id);
                 if (user == null)
-                    return base.NotFound();
+                    return NotFound();
 
-                return base.Ok(user);
+                return Ok(user);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // Should handle in ExceptionFilter
-                return base.InternalServerError();
+                return StatusCode(500);
             }
         }
 
-        public async Task<IHttpActionResult> Post([FromBody] NewUser newUser)
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] NewUser newUser)
         {
             try
             {
-                if (!base.ModelState.IsValid)
-                    return base.BadRequest("Name and age are required");
+                if (!ModelState.IsValid)
+                    return BadRequest("Name and age are required");
 
                 var user = await _userService.AddUserAsync(newUser.Name, newUser.Age);
 
-                return base.Created("/api/users", user);
+                return Created($"/api/users/{user.Id}", user);
             }
             catch (ArgumentException ex)
             {
-                // Log
-                return base.BadRequest(ex.Message);
+                return BadRequest(ex.Message);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // Should handle in ExceptionFilter
-                return base.InternalServerError();
+                return StatusCode(500);
             }
         }
 
-        public async Task<IHttpActionResult> Delete(Guid id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
                 await _userService.RemoveAsync(id);
-                return base.ResponseMessage(
-                    new System.Net.Http.HttpResponseMessage
-                    {
-                        StatusCode = System.Net.HttpStatusCode.NoContent,
-                    });
+                return NoContent();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // Should handle in ExceptionFilter
-                return base.InternalServerError();
+                return StatusCode(500);
             }
         }
     }
