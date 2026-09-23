@@ -1,15 +1,15 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiExample.WebApp", "WebApiExample.WebApp\WebApiExample.WebApp.csproj", "{5DFF62C3-DE59-4E35-AFE3-84EDC9A6A460}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiExample.WebApp.Tests", "WebApiExample.WebApp.Tests\WebApiExample.WebApp.Tests.csproj", "{E4D3ABDA-DB4C-47A3-BD81-943ACB7C521F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiExample.WebApp.Tests", "WebApiExample.WebApp.Tests\WebApiExample.WebApp.Tests.csproj", "{E4D3ABDA-DB4C-47A3-BD81-943ACB7C521F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiExample.Common", "WebApiExample.Common\WebApiExample.Common.csproj", "{08935032-68EB-4F0F-80BE-09E345264ADC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiExample.Common", "WebApiExample.Common\WebApiExample.Common.csproj", "{08935032-68EB-4F0F-80BE-09E345264ADC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiExample.DataStore", "WebApiExample.DataStore\WebApiExample.DataStore.csproj", "{05601C79-77A6-4F73-854D-9BBD78D387DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiExample.DataStore", "WebApiExample.DataStore\WebApiExample.DataStore.csproj", "{05601C79-77A6-4F73-854D-9BBD78D387DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,11 +1,10 @@
-﻿using Moq;
-using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web.Http.Results;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
+using Shouldly;
 using WebApiExample.DataStore.Models;
 using WebApiExample.WebApp.Controllers;
 using WebApiExample.WebApp.Services;
@@ -36,10 +35,10 @@ namespace WebApiExample.WebApp.Tests.Controllers
                     new User(),
                 });
 
-            var result = await _sut.Get() as OkNegotiatedContentResult<IEnumerable<User>>;
+            var result = await _sut.Get() as OkObjectResult;
 
             result.ShouldNotBeNull();
-            result.Content.Count().ShouldBe(3);
+            ((IEnumerable<User>)result.Value).Count().ShouldBe(3);
         }
 
         [Fact]
@@ -48,9 +47,10 @@ namespace WebApiExample.WebApp.Tests.Controllers
             _userService.Setup(u => u.GetAllUsersAsync())
                 .ThrowsAsync(new Exception());
 
-            var result = await _sut.Get();
+            var result = await _sut.Get() as StatusCodeResult;
 
-            result.ShouldBeOfType<InternalServerErrorResult>();
+            result.ShouldNotBeNull();
+            result.StatusCode.ShouldBe(500);
         }
 
         [Fact]
@@ -63,10 +63,10 @@ namespace WebApiExample.WebApp.Tests.Controllers
                 .Setup(u => u.GetUserAsync(It.Is<Guid>(curId => curId == id)))
                 .ReturnsAsync(user);
 
-            var result = await _sut.Get(id) as OkNegotiatedContentResult<User>;
+            var result = await _sut.Get(id) as OkObjectResult;
 
             result.ShouldNotBeNull();
-            result.Content.ShouldBeSameAs(user);
+            result.Value.ShouldBeSameAs(user);
         }
 
         [Fact]
@@ -90,9 +90,10 @@ namespace WebApiExample.WebApp.Tests.Controllers
                 .Setup(u => u.GetUserAsync(It.IsAny<Guid>()))
                 .ThrowsAsync(new Exception());
 
-            var result = await _sut.Get(Guid.NewGuid());
+            var result = await _sut.Get(Guid.NewGuid()) as StatusCodeResult;
 
-            result.ShouldBeOfType<InternalServerErrorResult>();
+            result.ShouldNotBeNull();
+            result.StatusCode.ShouldBe(500);
         }
 
         [Fact]
@@ -115,10 +116,10 @@ namespace WebApiExample.WebApp.Tests.Controllers
                 {
                     Name = user.Name,
                     Age = user.Age,
-                }) as CreatedNegotiatedContentResult<User>;
+                }) as CreatedResult;
 
             result.ShouldNotBeNull();
-            result.Content.ShouldBeSameAs(user);
+            result.Value.ShouldBeSameAs(user);
         }
 
         [Fact]
@@ -126,7 +127,6 @@ namespace WebApiExample.WebApp.Tests.Controllers
         {
             var message = "Error: Name is banned!";
 
-            // Just mock to throw the error as if it detected the banned name
             _userService
                 .Setup(u => u.AddUserAsync(
                     It.IsAny<string>(),
@@ -138,10 +138,10 @@ namespace WebApiExample.WebApp.Tests.Controllers
                 {
                     Name = "admin",
                     Age = 21,
-                }) as BadRequestErrorMessageResult;
+                }) as BadRequestObjectResult;
 
             result.ShouldNotBeNull();
-            result.Message.ShouldBe(message);
+            result.Value.ShouldBe(message);
         }
 
         [Fact]
@@ -158,9 +158,10 @@ namespace WebApiExample.WebApp.Tests.Controllers
                 {
                     Name = "John",
                     Age = 37
-                });
+                }) as StatusCodeResult;
 
-            result.ShouldBeOfType<InternalServerErrorResult>();
+            result.ShouldNotBeNull();
+            result.StatusCode.ShouldBe(500);
         }
 
         [Fact]
@@ -168,14 +169,13 @@ namespace WebApiExample.WebApp.Tests.Controllers
         {
             var id = Guid.NewGuid();
 
-            var result = await _sut.Delete(id) as ResponseMessageResult;
+            var result = await _sut.Delete(id);
 
             _userService.Verify(u => u.RemoveAsync(It.Is<Guid>(curId => curId == id)));
 
-            result.ShouldNotBeNull();
-            result.Response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NoContent);
+            result.ShouldBeOfType<NoContentResult>();
         }
-        
+
         [Fact]
         public async Task Delete_User_Returns_500()
         {
@@ -183,9 +183,10 @@ namespace WebApiExample.WebApp.Tests.Controllers
                 .Setup(u => u.RemoveAsync(It.IsAny<Guid>()))
                 .ThrowsAsync(new Exception());
 
-            var result = await _sut.Delete(Guid.NewGuid());
+            var result = await _sut.Delete(Guid.NewGuid()) as StatusCodeResult;
 
-            result.ShouldBeOfType<InternalServerErrorResult>();
+            result.ShouldNotBeNull();
+            result.StatusCode.ShouldBe(500);
         }
     }
 }
