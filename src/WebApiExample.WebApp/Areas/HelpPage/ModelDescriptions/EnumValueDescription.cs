@@ -1,11 +1,1 @@
-namespace WebApiExample.WebApp.Areas.HelpPage.ModelDescriptions
-{
-    public class EnumValueDescription
-    {
-        public string Documentation { get; set; }
-
-        public string Name { get; set; }
-
-        public string Value { get; set; }
-    }
-}
+// HelpPage area has been removed. API documentation is now provided by Swagger/OpenAPI.

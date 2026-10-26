@@ -1,12 +1,1 @@
-using System;
-using System.Reflection;
-
-namespace WebApiExample.WebApp.Areas.HelpPage.ModelDescriptions
-{
-    public interface IModelDocumentationProvider
-    {
-        string GetDocumentation(MemberInfo member);
-
-        string GetDocumentation(Type type);
-    }
-}
+// HelpPage area has been removed. API documentation is now provided by Swagger/OpenAPI.

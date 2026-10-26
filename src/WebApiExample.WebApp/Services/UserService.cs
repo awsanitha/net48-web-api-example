@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApiExample.Common.DataAccess;
@@ -10,7 +10,7 @@ namespace WebApiExample.WebApp.Services
     {
         Task<User> AddUserAsync(string name, int age);
         Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<User> GetUserAsync(Guid id);
+        Task<User?> GetUserAsync(Guid id);
         Task RemoveAsync(Guid id);
     }
 
@@ -53,7 +53,7 @@ namespace WebApiExample.WebApp.Services
             return users;
         }
 
-        public Task<User> GetUserAsync(Guid id)
+        public Task<User?> GetUserAsync(Guid id)
         {
             return _db.GetAsync<User>(id);
         }

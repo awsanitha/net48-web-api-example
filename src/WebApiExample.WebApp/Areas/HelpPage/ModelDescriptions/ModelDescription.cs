@@ -1,16 +1,1 @@
-using System;
-
-namespace WebApiExample.WebApp.Areas.HelpPage.ModelDescriptions
-{
-    /// <summary>
-    /// Describes a type model.
-    /// </summary>
-    public abstract class ModelDescription
-    {
-        public string Documentation { get; set; }
-
-        public Type ModelType { get; set; }
-
-        public string Name { get; set; }
-    }
-}
+// HelpPage area has been removed. API documentation is now provided by Swagger/OpenAPI.
