@@ -1,6 +1,1 @@
-namespace WebApiExample.WebApp.Areas.HelpPage.ModelDescriptions
-{
-    public class DictionaryModelDescription : KeyValuePairModelDescription
-    {
-    }
-}
+// HelpPage area has been removed. API documentation is now provided by Swagger/OpenAPI.

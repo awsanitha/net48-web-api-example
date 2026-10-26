@@ -1,7 +1,1 @@
-namespace WebApiExample.WebApp.Areas.HelpPage.ModelDescriptions
-{
-    public class CollectionModelDescription : ModelDescription
-    {
-        public ModelDescription ElementDescription { get; set; }
-    }
-}
+// HelpPage area has been removed. API documentation is now provided by Swagger/OpenAPI.
