@@ -1,22 +1,28 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Web.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using WebApiExample.DataStore.Models;
 using WebApiExample.WebApp.Models;
 using WebApiExample.WebApp.Services;
 
 namespace WebApiExample.WebApp.Controllers
 {
-    public class UsersController : ApiController
+    [ApiController]
+    [Route("api/[controller]")]
+    public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ILogger<UsersController> _logger;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, ILogger<UsersController> logger)
         {
             _userService = userService;
+            _logger = logger;
         }
 
-        public async Task<IHttpActionResult> Get()
+        [HttpGet]
+        public async Task<IActionResult> Get()
         {
             try
             {
@@ -25,12 +31,13 @@ namespace WebApiExample.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                // Should handle in ExceptionFilter
-                return base.InternalServerError();
+                _logger.LogError(ex, "Failed to retrieve all users.");
+                return base.StatusCode(500);
             }
         }
 
-        public async Task<IHttpActionResult> Get(Guid id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id)
         {
             try
             {
@@ -42,12 +49,13 @@ namespace WebApiExample.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                // Should handle in ExceptionFilter
-                return base.InternalServerError();
+                _logger.LogError(ex, "Failed to retrieve user {UserId}.", id);
+                return base.StatusCode(500);
             }
         }
 
-        public async Task<IHttpActionResult> Post([FromBody] NewUser newUser)
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] NewUser newUser)
         {
             try
             {
@@ -60,31 +68,28 @@ namespace WebApiExample.WebApp.Controllers
             }
             catch (ArgumentException ex)
             {
-                // Log
+                _logger.LogWarning(ex, "Rejected new user {UserName}.", newUser?.Name);
                 return base.BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                // Should handle in ExceptionFilter
-                return base.InternalServerError();
+                _logger.LogError(ex, "Failed to create user {UserName}.", newUser?.Name);
+                return base.StatusCode(500);
             }
         }
 
-        public async Task<IHttpActionResult> Delete(Guid id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
                 await _userService.RemoveAsync(id);
-                return base.ResponseMessage(
-                    new System.Net.Http.HttpResponseMessage
-                    {
-                        StatusCode = System.Net.HttpStatusCode.NoContent,
-                    });
+                return base.NoContent();
             }
             catch (Exception ex)
             {
-                // Should handle in ExceptionFilter
-                return base.InternalServerError();
+                _logger.LogError(ex, "Failed to delete user {UserId}.", id);
+                return base.StatusCode(500);
             }
         }
     }
