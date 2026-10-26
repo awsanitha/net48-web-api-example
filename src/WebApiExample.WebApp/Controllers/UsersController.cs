@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using WebApiExample.DataStore.Models;
 using WebApiExample.WebApp.Models;
 using WebApiExample.WebApp.Services;
@@ -12,10 +13,12 @@ namespace WebApiExample.WebApp.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ILogger<UsersController> _logger;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, ILogger<UsersController> logger)
         {
             _userService = userService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -28,7 +31,7 @@ namespace WebApiExample.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                // Should handle in ExceptionFilter
+                _logger.LogError(ex, "Failed to retrieve all users.");
                 return base.StatusCode(500);
             }
         }
@@ -46,7 +49,7 @@ namespace WebApiExample.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                // Should handle in ExceptionFilter
+                _logger.LogError(ex, "Failed to retrieve user {UserId}.", id);
                 return base.StatusCode(500);
             }
         }
@@ -65,12 +68,12 @@ namespace WebApiExample.WebApp.Controllers
             }
             catch (ArgumentException ex)
             {
-                // Log
+                _logger.LogWarning(ex, "Rejected new user {UserName}.", newUser?.Name);
                 return base.BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                // Should handle in ExceptionFilter
+                _logger.LogError(ex, "Failed to create user {UserName}.", newUser?.Name);
                 return base.StatusCode(500);
             }
         }
@@ -85,7 +88,7 @@ namespace WebApiExample.WebApp.Controllers
             }
             catch (Exception ex)
             {
-                // Should handle in ExceptionFilter
+                _logger.LogError(ex, "Failed to delete user {UserId}.", id);
                 return base.StatusCode(500);
             }
         }

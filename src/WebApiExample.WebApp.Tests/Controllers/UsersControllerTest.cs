@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging.Abstractions;
 using WebApiExample.DataStore.Models;
 using WebApiExample.WebApp.Controllers;
 using WebApiExample.WebApp.Services;
@@ -21,7 +22,7 @@ namespace WebApiExample.WebApp.Tests.Controllers
         public UsersControllerTest()
         {
             _userService = new Mock<IUserService>();
-            _sut = new UsersController(_userService.Object);
+            _sut = new UsersController(_userService.Object, NullLogger<UsersController>.Instance);
         }
 
         [Fact]
